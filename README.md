@@ -1,7 +1,7 @@
 ## Generate TypeScript interfaces and types from Json,JavaScript Object and Json files.
 ### Import functions
 ``` js
-import { jsonToTypesFromFile,jsonToTypesFromObject,jsonToTypesFromJson } from "jtot"
+import { jtotFromObject,jtotFromFile,jtotFromJson } from "jtot"
 ```
 ## Optional typePath
 ``` js 
