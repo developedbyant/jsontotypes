@@ -2,7 +2,7 @@ import * as fs from "fs";
 import utils from "./utils.js";
 // TODO: WORK ON MULTIPLE OBJECT INSIDE LIST
 // Create types from object
-export function jsonToTypesFromObject(objectData, name, typePath) {
+export function jtotFromObject(objectData, name, typePath) {
     const json = JSON.stringify(objectData);
     const typeName = utils.capitalize(name);
     const interfaceData = `export interface ${typeName}${jsonToTypes(json, 4)}//${typeName}\n`;
@@ -14,7 +14,7 @@ export function jsonToTypesFromObject(objectData, name, typePath) {
     return interfaceData;
 }
 // Create types from json
-export function jsonToTypesFromJson(json, name, typePath) {
+export function jtotFromJson(json, name, typePath) {
     const typeName = utils.capitalize(name);
     const interfaceData = `export interface ${typeName}${jsonToTypes(json, 4)}//${typeName}\n`;
     // Save interface to path
@@ -25,7 +25,7 @@ export function jsonToTypesFromJson(json, name, typePath) {
     return interfaceData;
 }
 // Create types from json file path
-export function jsonToTypesFromFile(jsonFilePath, name, typePath) {
+export function jtotFromFile(jsonFilePath, name, typePath) {
     const json = fs.readFileSync(jsonFilePath).toString();
     const typeName = utils.capitalize(name);
     const interfaceData = `export interface ${typeName}${jsonToTypes(json, 4)}//${typeName}\n`;

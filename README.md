@@ -1,14 +1,7 @@
 ## Generate TypeScript interfaces and types from Json,JavaScript Object and Json files.
 ### Import functions
 ``` js
-import { jsonToTypesFromFile,jsonToTypesFromObject,jsonToTypesFromJson } from "jsontotypes"
-```
-### Or just use npx
-```
-npx @developedbyant/j2t --file=fileName.json --name=User
-
---file (The json file path)
---name (Interface name)
+import { jsonToTypesFromFile,jsonToTypesFromObject,jsonToTypesFromJson } from "jtot"
 ```
 ## Optional typePath
 ``` js 
@@ -16,9 +9,9 @@ npx @developedbyant/j2t --file=fileName.json --name=User
 // It will allow to save the generated interface
 // To given path
 const typePath = "types.ts"
-jsonToTypesFromObject(userObject,"User",typePath)
-jsonToTypesFromFile(jsonFilePath,"UserFromJsonFile",typePath)
-jsonToTypesFromJson(jsonString,"UserFromJsonString",typePath)
+jtotFromObject(userObject,"User",typePath)
+jtotFromFile(jsonFilePath,"UserFromJsonFile",typePath)
+jtotFromJson(jsonString,"UserFromJsonString",typePath)
 ```
 ### Using JavaScript Object
 ``` js
@@ -32,19 +25,19 @@ const userObject = {
     ]
 }
 // User = Interface name
-console.log( jsonToTypesFromObject(userObject,"User") )
+console.log( jtotFromObject(userObject,"User") )
 ```
 ### Using json file 
 ``` js
 // UserFromJsonFile = Interface name
 const jsonFilePath = "test/user.json"
-console.log( jsonToTypesFromFile(jsonFilePath,"UserFromJsonFile") )
+console.log( jtotFromFile(jsonFilePath,"UserFromJsonFile") )
 ```
 ### Using json string 
 ``` js
 // UserFromJsonString = Interface name
 const jsonString = JSON.stringify(userObject)
-console.log( jsonToTypesFromFile(jsonString,"UserFromJsonString") )
+console.log( jtotFromFile(jsonString,"UserFromJsonString") )
 ```
 ### Outputs
 ``` ts
