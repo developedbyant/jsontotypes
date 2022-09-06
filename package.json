@@ -1,7 +1,7 @@
 {
   "type": "module",
   "bin": "./out/main.js",
-  "name": "jsontotypes",
+  "name": "@developedbyant/jsontotypes",
   "version": "0.0.1",
   "description": "Generate TypeScript interfaces and types from Json,JavaScript Object and Json files.",
   "main": "./out/main.js",

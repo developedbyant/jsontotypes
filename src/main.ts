@@ -4,7 +4,7 @@ import utils from "./utils.js"
 // TODO: WORK ON MULTIPLE OBJECT INSIDE LIST
 
 // Create types from object
-export default function jsonToTypesFromObject(objectData:object,name:string,typePath?:string){
+export function jsonToTypesFromObject(objectData:object,name:string,typePath?:string){
     const json = JSON.stringify(objectData)
     const typeName = utils.capitalize(name)
     const interfaceData = `export interface ${typeName}${jsonToTypes(json,4)}//${typeName}\n`
