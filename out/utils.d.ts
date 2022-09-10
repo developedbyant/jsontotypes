@@ -6,6 +6,6 @@ declare const _default: {
     num2Spaces(num: number): string;
     capitalize(data: string): string;
     isANumber(data: string): boolean;
-    saveType(interfaceData: string, typeName: string, typePath: string): void;
+    saveType(newData: string, typeName: string, typePath: string): void;
 };
 export default _default;

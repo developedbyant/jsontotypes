@@ -85,24 +85,22 @@ export default new class utils{
     isANumber(data:string){
         return [0,1,2,3,4,5,6,7,8,9,'0','1','2','3','4','5','6','7','8','9'].includes(data)
     }
-
-    // Save types to given path
-    saveType(interfaceData:string,typeName:string,typePath:string){
-        // Check if path exists
-        // If not create new path file
-        if(!fs.existsSync(typePath)) fs.writeFileSync(typePath,"")
+  
+    //** Save types to given path */
+    saveType(newData:string,typeName:string,typePath:string){
+        // newData = JSON.stringify(newData,null,4)
+        // Create file type if not founded
+        if(!fs.existsSync(typePath)) fs.writeFileSync(typePath,"// DO NOT REMOVE ANY TAG LIKE THESE <TypeName> or </TypeName> or INSIDE THEM\n")
         // Save to given path
-        const typePathData = fs.readFileSync(typePath).toString()
-        if(typePathData.includes(typeName)){
-            // Update interface
-            const interfaceInner = typePathData.split(`export interface ${typeName}`)[1].split(`//${typeName}\n`)[0]
-            const oldInterface = `export interface ${typeName}${interfaceInner}//${typeName}\n`
+        const oldData = fs.readFileSync(typePath).toString()
+        // Update interface | type if typeName exists in type file path
+        if(oldData.includes(`//<${typeName}>\n`) && `\n//</${typeName}>`){
+            const oldDataInner = oldData.split(`//<${typeName}>\n`)[1].split(`\n//</${typeName}>`)[0]
             // Replace old data for new one
-            fs.writeFileSync(typePath,typePathData.replace(oldInterface,interfaceData))
-        }else{
-            // Add new interface 
-            fs.appendFileSync(typePath,interfaceData)
+            fs.writeFileSync(typePath,oldData.replace(oldDataInner,newData))
         }
+        // Add new type | interface to file
+        else fs.appendFileSync(typePath,`\n\n//<${typeName}>\n${newData}\n//</${typeName}>`)
     }
 
 }

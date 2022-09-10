@@ -1,46 +1,93 @@
 import * as fs from "fs"
 import utils from "./utils.js"
 
-// TODO: WORK ON MULTIPLE OBJECT INSIDE LIST
-
-// Create types from object
-export function jtotFromObject(objectData:object,name:string,typePath?:string){
-    const json = JSON.stringify(objectData)
-    const typeName = utils.capitalize(name)
-    const interfaceData = `export interface ${typeName}${jsonToTypes(json,4)}//${typeName}\n`
-    // Save interface to path
-    if(typePath){
-        utils.saveType(interfaceData,typeName,typePath)
+//** Create types from object */
+export function jtotFromObject(objectList:object[],name:string,typePath?:string){
+    const objectLength = objectList.length
+    // Only run if objectList is 1 or max 2
+    if(objectLength > 0 && objectLength <=2){
+        const typeName = utils.capitalize(name) 
+        const types = []
+        // Loop all given object in list
+        for(const objectData of objectList){
+            const json = JSON.stringify(objectData)
+            const typeData = jsonToTypes(json,4)
+            types.push(typeData)
+        }
+        let response:string
+        // If length is 1 return interface
+        if(objectLength===1) response = `export interface ${typeName} ${types.join(" | ")}`
+        // Else return type, cause it's 2 object in list
+        else response = `export type ${typeName} = ${types.join(" | ")}`
+        // Save type(interface) if path was given
+        if(typePath && response!=="") utils.saveType(response,typeName,typePath)
+        // Return response
+        return response
     }
-    // Return interface
-    return interfaceData
+    else{ console.log("objectList length must be 1 or max 2") ; return "" }
 }
 
-// Create types from json
+//** Create types from json */
 export function jtotFromJson(json:string,name:string,typePath?:string){
-    const typeName = utils.capitalize(name)
-    const interfaceData = `export interface ${typeName}${jsonToTypes(json,4)}//${typeName}\n`
-    // Save interface to path
-    if(typePath){
-        utils.saveType(interfaceData,typeName,typePath)
+    // Check if parsed json start with [ mean it's a list
+    if(!json.startsWith("[")){ console.log("Json data must be inside a list [ {},{} ]") ; return "" }
+    // Else run code here
+    const objectList:object[] = JSON.parse(json)
+    const objectLength = objectList.length
+    // Only run if objectList is 1 or max 2
+    if(objectLength > 0 && objectLength <=2){
+        const typeName = utils.capitalize(name) 
+        const types = []
+        // Loop all given object in list
+        for(const objectData of objectList){
+            const json = JSON.stringify(objectData)
+            const typeData = jsonToTypes(json,4)
+            types.push(typeData)
+        }
+        let response:string
+        // If length is 1 return interface
+        if(objectLength===1) response = `export interface ${typeName} ${types.join(" | ")}`
+        // Else return type, cause it's 2 object in list
+        else response = `export type ${typeName} = ${types.join(" | ")}`
+        // Save type(interface) if path was given
+        if(typePath && response!=="") utils.saveType(response,typeName,typePath)
+        // Return response
+        return response
     }
-    // Return interface
-    return interfaceData
+    else{ console.log("objectList length must be 1 or max 2") ; return "" }
 }
 
-// Create types from json file path
-export function jtotFromFile(jsonFilePath:string,name:string,typePath?:string){
-    const json = fs.readFileSync(jsonFilePath).toString()
-    const typeName = utils.capitalize(name)
-    const interfaceData = `export interface ${typeName}${jsonToTypes(json,4)}//${typeName}\n`
-    // Save interface to path
-    if(typePath){
-        utils.saveType(interfaceData,typeName,typePath)
+//** Create types from json file */
+export function jtotFromFile(filePath:string,name:string,typePath?:string){
+    const json = fs.readFileSync(filePath).toString()
+    // Check if parsed json start with [ mean it's a list
+    if(!json.startsWith("[")){ console.log("Json data must be inside a list [ {},{} ]") ; return "" }
+    // Else run code here
+    const objectList:object[] = JSON.parse(json)
+    const objectLength = objectList.length
+    // Only run if objectList is 1 or max 2
+    if(objectLength > 0 && objectLength <=2){
+        const typeName = utils.capitalize(name) 
+        const types = []
+        // Loop all given object in list
+        for(const objectData of objectList){
+            const json = JSON.stringify(objectData)
+            const typeData = jsonToTypes(json,4)
+            types.push(typeData)
+        } 
+        let response:string
+        // If length is 1 return interface
+        if(objectLength===1) response = `export interface ${typeName} ${types.join(" | ")}`
+        // Else return type, cause it's 2 object in list
+        else response = `export type ${typeName} = ${types.join(" | ")}`
+        // Save type(interface) if path was given
+        if(typePath && response!=="") utils.saveType(response,typeName,typePath)
+        // Return response
+        return response
     }
-    // Return interface
-    return interfaceData
+    else{ console.log("objectList length must be 1 or max 2") ; return "" }
 }
- 
+  
 function jsonToTypes(json:string, numSpaces=4){
     // The number of spaces tab = 4 or more
     const spaces = utils.num2Spaces(numSpaces)
@@ -79,7 +126,6 @@ function jsonToTypes(json:string, numSpaces=4){
             interfaceStr += `\n${spaces}${specialCharacters ? `"${objectKey}"` : objectKey}:${type}`
         }
     }
-
     // Return interface
     return `${interfaceStr}\n${spaces.length===4?"":"    "}}`
-}
+} 

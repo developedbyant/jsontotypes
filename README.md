@@ -1,4 +1,6 @@
 ## Generate TypeScript interfaces and types from Json,JavaScript Object and Json files.
+## NOTE: INPUT MUSH BE INSIDE ARRAY (LIST)
+```EXAMPLE [{user:"tony}] OR [{user:"tony},user:null]```
 ### Import functions
 ``` js
 import { jtotFromObject,jtotFromFile,jtotFromJson } from "jtot"
@@ -15,15 +17,30 @@ jtotFromJson(jsonString,"UserFromJsonString",typePath)
 ```
 ### Using JavaScript Object
 ``` js
-const userObject = {
-    name:"Tony",
-    age:24,
-    jobs:[ "developer","singer" ],
-    posts:[
-        { id:1, title:"How to cook", tags:["cook"] },
-        { id:2, title:"How to drive", tags:["drive"] }
-    ]
-}
+const userObject = [
+    {
+        name:"Tony",
+        age:24,
+        jobs:[ "developer","singer" ],
+        posts:[
+            { id:1, title:"How to cook", tags:["cook"] },
+            { id:2, title:"How to drive", tags:["drive"] }
+        ]
+    }
+]
+// IF ADD 2 OBJECTS IT WILL CREATE A OR TYPE
+const userObject = [
+    {
+        name:"Tony",
+        age:24,
+        jobs:[ "developer","singer" ],
+        posts:[
+            { id:1, title:"How to cook", tags:["cook"] },
+            { id:2, title:"How to drive", tags:["drive"] }
+        ]
+    },
+    {user:null}
+]
 // User = Interface name
 console.log( jtotFromObject(userObject,"User") )
 ```
@@ -72,4 +89,3 @@ export interface UserFromJsonString{
     }
 }
 ```
-## TODO: WORK ON MULTIPLE OBJECT INSIDE LIST
