@@ -109,6 +109,9 @@ export function jtotFromFile(filePath, name, typePath) {
     }
 }
 function jsonToTypes(json, numSpaces = 4) {
+    // Check if json is a boolean
+    if (json === "false" || json === "true")
+        return false;
     // The number of spaces tab = 4 or more
     const spaces = utils.num2Spaces(numSpaces);
     const jsonObject = JSON.parse(json);

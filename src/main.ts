@@ -2,7 +2,7 @@ import * as fs from "fs"
 import utils from "./utils.js"
 
 //** Create types from object */
-export function jtotFromObject(objectList:object[],name:string,typePath?:string){
+export function jtotFromObject(objectList:any[],name:string,typePath?:string){   
     const objectLength = objectList.length
     // Only run if objectList is 1 or max 2
     if(objectLength > 0 && objectLength <=2){
@@ -89,6 +89,8 @@ export function jtotFromFile(filePath:string,name:string,typePath?:string){
 }
   
 function jsonToTypes(json:string, numSpaces=4){
+    // Check if json is a boolean
+    if(json==="false" || json==="true") return false
     // The number of spaces tab = 4 or more
     const spaces = utils.num2Spaces(numSpaces)
     const jsonObject:Object = JSON.parse(json)
@@ -128,4 +130,4 @@ function jsonToTypes(json:string, numSpaces=4){
     }
     // Return interface
     return `${interfaceStr}\n${spaces.length===4?"":"    "}}`
-} 
+}
