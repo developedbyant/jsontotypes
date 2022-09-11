@@ -1,6 +1,7 @@
 import utils, { nonObjectTypes } from "./utils.js";
 import $jtot from "./$jtot.js";
-//** Create types from object */
+import { readFileSync, existsSync } from "fs";
+//** Create types or interface from object */
 export default function jtot(objectList, name, typePath) {
     const objectLength = objectList.length;
     // Check if correct data was given
@@ -39,4 +40,36 @@ export default function jtot(objectList, name, typePath) {
         utils.saveType(response, typeName, typePath);
     // Return response
     return response;
+}
+//** Create types or interface from json data */
+export function jtotFromJson(jsonDataList, name, typePath) {
+    jsonDataList = jsonDataList.trim();
+    const isJsonList = jsonDataList.startsWith("[") && jsonDataList.endsWith("]");
+    if (isJsonList) {
+        const objectList = JSON.parse(jsonDataList);
+        return jtot(objectList, name, typePath);
+    }
+    else {
+        console.log(`Json data must be a list of json object example: [{"name:"Tone"}]`);
+        return "";
+    }
+}
+//** Create types or interface from json file path */
+export function jtotFromFile(filePath, name, typePath) {
+    const fileExists = existsSync(filePath);
+    // Warn if file do not exists
+    if (!fileExists) {
+        console.log(`Json file:${filePath} do not exists.`);
+        return "";
+    }
+    const jsonFileData = readFileSync(filePath).toString();
+    const isJsonList = jsonFileData.startsWith("[") && jsonFileData.endsWith("]");
+    if (isJsonList) {
+        const objectList = JSON.parse(jsonFileData);
+        return jtot(objectList, name, typePath);
+    }
+    else {
+        console.log(`Json data must be a list of json object example: [{"name:"Tone"}]`);
+        return "";
+    }
 }

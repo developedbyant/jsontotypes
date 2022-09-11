@@ -1,9 +1,10 @@
 import * as fs from "fs"
+import javaScriptObjectToInterface from "./$jtot.js"
 
 export const nonObjectTypes = [
     false, null, true, Date, undefined,
     "false", "null", "number", "true", "Date", "undefined", "boolean", "string", "list"
-] 
+]
 
 export default new class utils{
 
@@ -46,6 +47,26 @@ export default new class utils{
         const firstObject = items[0]
         // If First object in list is non object type return it as value
         if(nonObjectTypes.includes(firstObject)) return `${firstObject}[]`
+        // Check if it's multiple type inside
+        const isOnlyObject = this.onlyObject(items)
+        if(!isOnlyObject){
+            const multiTypes:any[] = []
+            for(const item of items){
+                const itemType = typeof item
+                // If javaScript Object
+                if(!multiTypes.includes(itemType) && itemType==="object"){
+                    const jsonData = JSON.stringify(item)
+                    multiTypes.push(javaScriptObjectToInterface(jsonData,8,true))
+                }
+                // If regular data type
+                else if(!multiTypes.includes(itemType)){
+                    multiTypes.push(itemType)
+                }
+            }
+            // Return multiple types
+            return `(${multiTypes.join("|")})[]`
+        }
+
 
         const resultList = []
 
@@ -62,7 +83,7 @@ export default new class utils{
             // Run on non object
             else resultList.push(`${key}:${this.getType(value,true)}`)
         }
-        return `{${resultList.join(",")}}[]`
+        return `{ ${resultList.join(",")} }[]`
     }
 
     //** Save types to given path */
@@ -81,6 +102,18 @@ export default new class utils{
         // Add new type | interface to file
         else fs.appendFileSync(typePath,`\n\n//<${typeName}>\n${newData}\n//</${typeName}>`)
     }
+
+    //** Check if all items in list are object */
+    onlyObject(items:any[]){
+        const typesList:any[] = []
+        for(const item of items){
+            const type = this.getType(item)
+            if(!typesList.includes(type)) typesList.push(type)
+        }
+        // Return result
+        return (typesList.length === 1 && typesList[0]==="object") ? true : false 
+    }
+
 
     //** Convert number to spaces */
     num2Spaces(num:number){

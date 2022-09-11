@@ -1,7 +1,8 @@
 import utils,{nonObjectTypes} from "./utils.js"
 import $jtot from "./$jtot.js" 
+import { readFileSync, existsSync } from "fs";
 
-//** Create types from object */
+//** Create types or interface from object */
 export default function jtot(objectList:any[],name:string,typePath?:string){   
     const objectLength = objectList.length
     // Check if correct data was given
@@ -33,4 +34,36 @@ export default function jtot(objectList:any[],name:string,typePath?:string){
     if(typePath && response!=="") utils.saveType(response,typeName,typePath)
     // Return response
     return response
+}
+
+//** Create types or interface from json data */
+export function jtotFromJson(jsonDataList:string,name:string,typePath?:string){
+    jsonDataList = jsonDataList.trim()
+    const isJsonList = jsonDataList.startsWith("[")&&jsonDataList.endsWith("]")
+    if(isJsonList){
+        const objectList:any[] = JSON.parse(jsonDataList)
+        return jtot(objectList,name,typePath)
+    }else{
+        console.log(`Json data must be a list of json object example: [{"name:"Tone"}]`)
+        return ""
+    }
+}
+
+//** Create types or interface from json file path */
+export function jtotFromFile(filePath:string,name:string,typePath?:string){
+    const fileExists = existsSync(filePath)
+    // Warn if file do not exists
+    if(!fileExists){
+        console.log(`Json file:${filePath} do not exists.`)
+        return ""
+    }
+    const jsonFileData = readFileSync(filePath).toString()
+    const isJsonList = jsonFileData.startsWith("[")&&jsonFileData.endsWith("]")
+    if(isJsonList){
+        const objectList:any[] = JSON.parse(jsonFileData)
+        return jtot(objectList,name,typePath)
+    }else{
+        console.log(`Json data must be a list of json object example: [{"name:"Tone"}]`)
+        return ""
+    }
 }
