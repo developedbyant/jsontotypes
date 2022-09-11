@@ -1,9 +1,21 @@
 import * as fs from "fs"
 
+export const nonObjectTypes = [
+    false, null, true, Date, undefined,
+    "false", "null", "number", "true", "Date", "undefined", "boolean", "string", "list"
+] 
+
 export default new class utils{
 
-    // Get type
-    getType(data:any){
+    //** Get given data type */
+    getType(data:any,useBol:boolean=false){
+        // When using the key _useBoll, return false or true not boolean
+        if(!useBol){
+            // False
+            if(data===false) return "false"
+            // True
+            if(data===true) return "true"
+        }
         const dataType = typeof data
         const isDateType = (dataType==="string" && this.isANumber(data.slice(0,1))) && data.endsWith("Z") ? true : false
         if(isDateType) return "Date"
@@ -25,67 +37,34 @@ export default new class utils{
         else return "object"
     }
 
-    // Check if list includes objects inside
-    includesObjects(items:any[]){
-        let includeObject = false
-        // Loop
-        for(const item of items){
-            const itemType = this.getType(item)
-            if(itemType==="object"){
-                includeObject = true 
-                break // Break loop 
+    //** Get types of object in list */
+    listToInterface(items:any){
+        const itemLength = items.length
+        // If Lenght is 0 retun any list
+        if(itemLength===0) return "any[]"
+        // Else get key inside object
+        const firstObject = items[0]
+        // If First object in list is non object type return it as value
+        if(nonObjectTypes.includes(firstObject)) return `${firstObject}[]`
+
+        const resultList = []
+
+        // Else Loop all key in object
+        for(const [key,value] of Object.entries(firstObject)){
+            // Check if value is a JavaScript Object
+            const objectType = typeof value
+            const isJsObject = nonObjectTypes.includes(objectType) ? false : true
+            // Run on Object
+            if(isJsObject){
+                const listData:string = this.listToInterface(value)
+                resultList.push(`${key}:${listData}`)
             }
+            // Run on non object
+            else resultList.push(`${key}:${this.getType(value,true)}`)
         }
-        // Return result false | true
-        return includeObject
+        return `{${resultList.join(",")}}[]`
     }
 
-    // Check if list only includes objects inside 
-    includesOnlyObjects(items:any[]){
-        let includesOnlyObjects = true
-        // Loop
-        for(const item of items){
-            const itemType = this.getType(item)
-            if(itemType!=="object"){
-                includesOnlyObjects = false 
-                break // Break loop 
-            }
-        }
-        // Return result false | true
-        return includesOnlyObjects
-    }
-
-    // Get types inside list without object
-    getListTypesNoObject(items:any[]){
-        const types:any[] = []
-        for(const item of items){
-            // Get item type
-            const itemType = typeof item
-            // Only add if type not in types list
-            if(!types.includes(itemType)) types.push(itemType)
-        }
-        // Check if only one type or multiple
-        if(types.length===1){ return `${types[0]}[]` }
-        else{ return `(${types.join('|')})[]` }
-    }
-
-    // Convert number to spaces
-    num2Spaces(num:number){
-        let spaces = ''
-        for(let n of [...Array(num).keys()]) spaces += ' '
-        return spaces
-    }
-
-    // Capitalize string
-    capitalize(data:string){
-        return data.charAt(0).toUpperCase()+data.slice(1)
-    }
-
-    // Check if string it's a number
-    isANumber(data:string){
-        return [0,1,2,3,4,5,6,7,8,9,'0','1','2','3','4','5','6','7','8','9'].includes(data)
-    }
-  
     //** Save types to given path */
     saveType(newData:string,typeName:string,typePath:string){
         // newData = JSON.stringify(newData,null,4)
@@ -101,6 +80,23 @@ export default new class utils{
         }
         // Add new type | interface to file
         else fs.appendFileSync(typePath,`\n\n//<${typeName}>\n${newData}\n//</${typeName}>`)
+    }
+
+    //** Convert number to spaces */
+    num2Spaces(num:number){
+        let spaces = ''
+        for(let n of [...Array(num).keys()]) spaces += ' '
+        return spaces
+    }
+
+    //** Capitalize string */
+    capitalize(data:string){
+        return data.charAt(0).toUpperCase()+data.slice(1)
+    }
+
+    //** Check if string it's a number */
+    isANumber(data:string){
+        return [0,1,2,3,4,5,6,7,8,9,'0','1','2','3','4','5','6','7','8','9'].includes(data)
     }
 
 }

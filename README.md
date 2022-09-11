@@ -1,91 +1,39 @@
 ## Generate TypeScript interfaces and types from Json,JavaScript Object and Json files.
-## NOTE: INPUT MUSH BE INSIDE ARRAY (LIST)
-```EXAMPLE [{user:"tony}] OR [{user:"tony},user:null]```
-### Import functions
-``` js
-import { jtotFromObject,jtotFromFile,jtotFromJson } from "jtot"
-```
-## Optional typePath
-``` js 
-// You can also pass typePath
-// It will allow to save the generated interface
-// To given path
-const typePath = "types.ts"
-jtotFromObject(userObject,"User",typePath)
-jtotFromFile(jsonFilePath,"UserFromJsonFile",typePath)
-jtotFromJson(jsonString,"UserFromJsonString",typePath)
-```
-### Using JavaScript Object
-``` js
-const userObject = [
-    {
-        name:"Tony",
-        age:24,
-        jobs:[ "developer","singer" ],
-        posts:[
-            { id:1, title:"How to cook", tags:["cook"] },
-            { id:2, title:"How to drive", tags:["drive"] }
-        ]
-    }
-]
-// IF ADD 2 OBJECTS IT WILL CREATE A OR TYPE
-const userObject = [
-    {
-        name:"Tony",
-        age:24,
-        jobs:[ "developer","singer" ],
-        posts:[
-            { id:1, title:"How to cook", tags:["cook"] },
-            { id:2, title:"How to drive", tags:["drive"] }
-        ]
-    },
-    {user:null}
-]
-// User = Interface name
-console.log( jtotFromObject(userObject,"User") )
-```
-### Using json file 
-``` js
-// UserFromJsonFile = Interface name
-const jsonFilePath = "test/user.json"
-console.log( jtotFromFile(jsonFilePath,"UserFromJsonFile") )
-```
-### Using json string 
-``` js
-// UserFromJsonString = Interface name
-const jsonString = JSON.stringify(userObject)
-console.log( jtotFromFile(jsonString,"UserFromJsonString") )
-```
-### Outputs
 ``` ts
-export interface User{
-    name:string
-    age:number
-    jobs:string[]
-    posts:{
-        id:number
-        title:string
-        tags:string[]
-    }
+// Import JavaScript to Types (TypeScript)
+import jtot from "./main.js";
+// jtot take 3 params
+    // 1 list object js object
+    // 2 interface|type name
+    // 3 path to save data (optinal)
+// List of object must be 1 for interface or 2 for OR type
+// add { _useBol:true } to treat boolean as boolean not false|true
+
+// Create single interface
+const userData = {
+    name:"Tony", age:24, canPost:true
 }
-export interface UserFromJsonFile{
+// Wrap inside a list [userData]
+const userInterface = jtot([userData],"User","types.ts")
+// OUTPUT
+export interface User {
     name:string
     age:number
-    jobs:string[]
-    posts:{
-        id:number
-        title:string
-        tags:string[]
-    }
+    canPost:true
 }
-export interface UserFromJsonString{
+
+// Create OR type
+const errorObject = { ok:false, msg:"Could not create user" }
+    // added _useBol to treat canPost boolean
+const newUserData = { _useBol:true, name:"Tony", age:24, canPost:true }
+const newUserResponseType = [errorObject,newUserData] 
+// OUTPUT
+export type NewUserOutOut = {
+    ok:false
+    msg:string
+} | {
     name:string
     age:number
-    jobs:string[]
-    posts:{
-        id:number
-        title:string
-        tags:string[]
-    }
+    canPost:boolean
 }
 ```
