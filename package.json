@@ -2,7 +2,7 @@
   "type": "module",
   "bin": "./out/main.js",
   "name": "jtot",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Generate TypeScript interfaces and types from Json,JavaScript Object and Json files.",
   "main": "./out/main.js",
   "types": "./out/main.d.ts",

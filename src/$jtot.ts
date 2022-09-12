@@ -36,7 +36,7 @@ export default function javaScriptObjectToInterface(jsonData:string,numSpaces=4,
             // If type in list are the same and it's an object
             if(sameTypes && utils.getType(keyValue[0])==="object"){
                 const jsonData = JSON.stringify(keyValue[0])
-                interfaceData+=`\n${spaces}${key}:${javaScriptObjectToInterface(jsonData,8,true)}`
+                interfaceData+=`\n${spaces}${key}:${javaScriptObjectToInterface(jsonData,8,true)}[]`
             }
             // Else if are not the same get types in list
             else{
