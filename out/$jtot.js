@@ -2,10 +2,10 @@ import utils, { nonObjectTypes } from "./utils.js";
 // Core Function 
 export default function javaScriptObjectToInterface(jsonData, numSpaces = 4, useBol = false) {
     const jsonDataType = typeof jsonData;
-    const isNoJsonObject = nonObjectTypes.includes(jsonDataType) ? false : true;
+    const isNotJsonObject = nonObjectTypes.includes(jsonDataType) ? false : true;
     const spaces = utils.num2Spaces(numSpaces);
     // If jsonData is not a json object, return it's value
-    if (isNoJsonObject)
+    if (isNotJsonObject)
         return utils.getType(jsonData);
     // Else get JavaScript Object types
     const jsObject = JSON.parse(jsonData);
@@ -15,7 +15,9 @@ export default function javaScriptObjectToInterface(jsonData, numSpaces = 4, use
     }
     let interfaceData = "{";
     // Loop jsObject key and value
-    for (const [key, value] of Object.entries(jsObject)) {
+    for (let [key, value] of Object.entries(jsObject)) {
+        const keyValue = value;
+        // Get vale type
         const valueType = utils.getType(value, useBol);
         // If value type is not an list or JavaScript object return valueType(non object type)
         const returnValue = valueType !== "object" && valueType !== "list";
@@ -28,10 +30,48 @@ export default function javaScriptObjectToInterface(jsonData, numSpaces = 4, use
         }
         // Loop list and get it's interfaces
         else if (valueType === "list") {
-            interfaceData += `\n${spaces}${key}:${utils.listToInterface(value)}`;
-            utils.listToInterface(value);
+            // Check if all values in array are the same
+            const sameTypes = isSameTypesInList(keyValue);
+            // If type in list are the same and it's an object
+            if (sameTypes && utils.getType(keyValue[0]) === "object") {
+                const jsonData = JSON.stringify(keyValue[0]);
+                interfaceData += `\n${spaces}${key}:${javaScriptObjectToInterface(jsonData, 8, true)}`;
+            }
+            // Else if are not the same get types in list
+            else {
+                // getTypesInList(keyValue)
+                interfaceData += `\n${spaces}${key}:${getTypesInList(keyValue)}`;
+            }
         }
     }
     // Return response
     return `${interfaceData}\n${spaces.length === 4 ? "" : "    "}}`;
+}
+//** Check if all item in list are the same */
+function isSameTypesInList(items) {
+    const itemKeys = [];
+    for (const item of items) {
+        const type = typeof item;
+        if (!itemKeys.includes(type))
+            itemKeys.push(type);
+    }
+    return itemKeys.length === 1 ? true : false;
+}
+//** Check if all item in list are the same */
+function getTypesInList(items) {
+    const types = [];
+    // Loop all items
+    for (const item of items) {
+        const type = utils.getType(item);
+        // If object
+        if (type === "object") {
+            const jsonData = JSON.stringify(item);
+            types.push(javaScriptObjectToInterface(jsonData, 0, true).replace(/\n| /gi, ""));
+        }
+        // Else return it's type
+        else
+            types.push(type);
+    }
+    // Return multiple types list
+    return `(${types.join("|")})[]`;
 }
